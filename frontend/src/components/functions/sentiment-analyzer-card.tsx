@@ -11,9 +11,11 @@ import { Input } from "../ui/input";
 
 export default function SentimentAnalyzer() {
   return (
-    <Card className="mb-8 shadow-md md:w-2/3">
+    <Card className="mb-8 shadow-md md:w-3/4 rounded-sm">
       <CardHeader>
-        <CardTitle>Search Stock Sentiment</CardTitle>
+        <CardTitle className="text-3xl font-semibold">
+          Search Stock Sentiment
+        </CardTitle>
         <CardDescription>
           Enter a stock symbol to analyze Reddit sentiment from r/stocks
         </CardDescription>

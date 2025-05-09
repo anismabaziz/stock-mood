@@ -1,4 +1,7 @@
+import AnalysisCard from "@/components/functions/analysis-card";
+import RedditPosts from "@/components/functions/reddit-posts";
 import SentimentAnalyzer from "@/components/functions/sentiment-analyzer-card";
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
@@ -12,6 +15,8 @@ export default function Home() {
           neutral, or negative to help you gauge market sentiment.
         </p>
         <SentimentAnalyzer />
+        <AnalysisCard />
+        <RedditPosts />
       </div>
     </main>
   );
