@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from reddit import fetch_posts, model_post
-from text import clean
-from model import predict, embed
+from helpers.reddit import fetch_posts, model_post
+from helpers.text import clean
+from helpers.model import predict, embed
 
 app = FastAPI()
 
