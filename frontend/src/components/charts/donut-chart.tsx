@@ -31,7 +31,8 @@ const chartConfig = {
 export default function SentimentDonutChart({
   distribution,
 }: SentimentDonutChartProps) {
-  const totalPosts = 100;
+  const totalPosts =
+    distribution.negative + distribution.positive + distribution.neutral;
 
   const chartData = [
     {

@@ -1,4 +1,3 @@
-import data from "@/lib/data.json";
 import PostCard from "./post-card";
 import {
   BarChart3,
@@ -18,9 +17,12 @@ import {
   DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
+import useStockStore from "@/stores/stock-store";
 
 export default function RedditPosts() {
-  const posts = data.results;
+  const { stockData } = useStockStore();
+  const posts = stockData!.results!;
+
   return (
     <div className="md:w-3/4 space-y-6">
       <div className="flex items-center gap-4 justify-between">

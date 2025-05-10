@@ -2,10 +2,11 @@ import { Tabs, TabsTrigger, TabsList, TabsContent } from "../ui/tabs";
 import SentimentDonutChart from "@/components/charts/donut-chart";
 import SentimentBarChart from "@/components/charts/normal-chart";
 import { Card, CardContent } from "@/components/ui/card";
-import data from "@/lib/data.json";
+import useStockStore from "@/stores/stock-store";
 
 export default function Charts() {
-  const sentimentDistribution = data.distribution;
+  const { stockData } = useStockStore();
+  const sentimentDistribution = stockData!.distribution!;
 
   const colors = { positive: "green", negative: "red", neutral: "gray" };
   const sentimentArr = Object.entries(sentimentDistribution).map((entry) => {
