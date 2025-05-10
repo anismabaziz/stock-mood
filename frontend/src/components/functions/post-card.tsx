@@ -2,17 +2,10 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { ThumbsUp, ArrowUpRight, Calendar } from "lucide-react";
 import { Badge } from "../ui/badge";
+import type { Post } from "@/types/app";
 
 interface PostCardProps {
-  post: {
-    title: string;
-    content: string;
-    author: string;
-    upvotes: number;
-    estimated_downvotes: number;
-    sentiment: string;
-    created_utc: string;
-  };
+  post: Post;
 }
 
 export default function PostCard({ post }: PostCardProps) {
@@ -89,5 +82,9 @@ function getSentimentColor(sentiment: string) {
 
 function formatDate(date_str: string) {
   const date = new Date(date_str);
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }

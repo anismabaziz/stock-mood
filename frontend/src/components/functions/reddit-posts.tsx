@@ -4,7 +4,6 @@ import {
   Filter,
   ChevronDown,
   Calendar,
-  TrendingUp,
   SortAsc,
 } from "lucide-react";
 import {
@@ -18,10 +17,42 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import useStockStore from "@/stores/stock-store";
+import { useState, useMemo } from "react";
+import { Badge } from "../ui/badge";
 
 export default function RedditPosts() {
   const { stockData } = useStockStore();
   const posts = stockData!.results!;
+
+  const [sentimentFilter, setSentimentFilter] = useState<
+    "all" | "positive" | "neutral" | "negative"
+  >("all");
+  const [sortOption, setSortOption] = useState<"relevance" | "date">(
+    "relevance"
+  );
+
+  const filteredAndSortedPosts = useMemo(() => {
+    let result = [...posts];
+
+    if (sentimentFilter !== "all") {
+      result = result.filter(
+        (post) => post.sentiment.toLowerCase() === sentimentFilter
+      );
+    }
+
+    if (sortOption === "date") {
+      result.sort(
+        (a, b) =>
+          new Date(b.created_utc).getTime() - new Date(a.created_utc).getTime()
+      );
+    }
+
+    if (sortOption === "relevance") {
+      result.sort((a, b) => b.upvotes - a.upvotes);
+    }
+
+    return result;
+  }, [posts, sentimentFilter, sortOption]);
 
   return (
     <div className="md:w-3/4 space-y-6">
@@ -31,13 +62,16 @@ export default function RedditPosts() {
           Reddit Posts
         </h2>
         <div className="flex items-center gap-2">
-          <FilterMenu />
-          <SortingMenu />
+          <FilterMenu
+            setFilter={setSentimentFilter}
+            filterOption={sentimentFilter}
+          />
+          <SortingMenu setSort={setSortOption} sortOption={sortOption} />
         </div>
       </div>
 
       <div className="space-y-4">
-        {posts.map((post) => {
+        {filteredAndSortedPosts.map((post) => {
           return <PostCard post={post} />;
         })}
       </div>
@@ -45,13 +79,24 @@ export default function RedditPosts() {
   );
 }
 
-function FilterMenu() {
+interface FilterMenuProps {
+  setFilter: (filter: "all" | "positive" | "neutral" | "negative") => void;
+  filterOption: "all" | "positive" | "neutral" | "negative";
+}
+
+function FilterMenu({ setFilter, filterOption }: FilterMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 gap-1">
           <Filter className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Filter</span>
+          <Badge
+            variant="secondary"
+            className={filterOption === "all" ? "hidden" : "ml-1 h-5 px-1.5"}
+          >
+            {filterOption}
+          </Badge>
           <ChevronDown className="h-3.5 w-3.5 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
@@ -59,16 +104,18 @@ function FilterMenu() {
         <DropdownMenuLabel>Filter by Sentiment</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>All Posts</DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setFilter("all")}>
+            All Posts
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setFilter("positive")}>
             <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
             Positive
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setFilter("neutral")}>
             <span className="w-2 h-2 rounded-full bg-gray-500 mr-2"></span>
             Neutral
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setFilter("negative")}>
             <span className="w-2 h-2 rounded-full bg-red-500 mr-2"></span>
             Negative
           </DropdownMenuItem>
@@ -78,14 +125,20 @@ function FilterMenu() {
   );
 }
 
-function SortingMenu() {
+interface SortingMenuProps {
+  setSort: (criteria: "relevance" | "date") => void;
+  sortOption: "relevance" | "date";
+}
+function SortingMenu({ setSort, sortOption }: SortingMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 gap-1">
           <SortAsc className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Sort</span>
-
+          <Badge variant="secondary" className="ml-1 h-5 px-1.5">
+            {sortOption}
+          </Badge>
           <ChevronDown className="h-3.5 w-3.5 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
@@ -93,14 +146,18 @@ function SortingMenu() {
         <DropdownMenuLabel>Sort Posts By</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Relevance</DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setSort("relevance")}
+            className={`${sortOption == "relevance" && "bg-accent"}`}
+          >
+            Relevance
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setSort("date")}
+            className={`${sortOption == "date" && "bg-accent"}`}
+          >
             <Calendar className="h-4 w-4 mr-2" />
             Date (Newest)
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <TrendingUp className="h-4 w-4 mr-2" />
-            Sentiment Score
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
