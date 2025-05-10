@@ -4,7 +4,7 @@ from tensorflow.keras import backend as K
 
 
 def embed(texts):
-    ## Generate embeddings
+    ## generate embeddings
     embedding_model = SentenceTransformer("yiyanghkust/finbert-tone")
     embeddings = embedding_model.encode(texts)
 
@@ -16,13 +16,13 @@ def predict(embeddings):
 
     n = embeddings.shape[0]
 
-    ## Reshape embeddings
+    ## reshape embeddings
     embeddings_reshaped = embeddings.reshape(n, -1)
 
-    ## Load model
-    model = tf.keras.models.load_model("model/models/model_v1.keras")
+    ## load model
+    model = tf.keras.models.load_model("models/model_v1.keras")
 
-    ## Perform Prediction
+    ## perform Prediction
     predictions = model.predict(embeddings_reshaped)
     classes = ["Negative", "Neutral", "Positive"]
     sentiments = [classes[pred.argmax(-1)] for pred in predictions]
