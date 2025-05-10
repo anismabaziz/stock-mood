@@ -45,4 +45,8 @@ def analyze_stock(stock: Stock):
         else:
             sentiment_counts["neutral"] += 1
 
-    return {"results": results, "distribution": sentiment_counts}
+    return {
+        "stock_symbol": stock_symbol,
+        "results": results,
+        "distribution": sentiment_counts,
+    }

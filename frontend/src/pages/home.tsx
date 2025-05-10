@@ -1,8 +1,11 @@
 import AnalysisCard from "@/components/functions/analysis-card";
 import RedditPosts from "@/components/functions/reddit-posts";
 import SentimentAnalyzer from "@/components/functions/sentiment-analyzer-card";
+import useStockStore from "@/stores/stock-store";
 
 export default function Home() {
+  const { stockData } = useStockStore();
+  console.log(stockData);
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       <div className="container mx-auto py-10 px-4 flex flex-col items-center">
@@ -15,8 +18,8 @@ export default function Home() {
           neutral, or negative to help you gauge market sentiment.
         </p>
         <SentimentAnalyzer />
-        <AnalysisCard />
-        <RedditPosts />
+        {stockData && <AnalysisCard />}
+        {stockData && <RedditPosts />}
       </div>
     </main>
   );
