@@ -1,16 +1,12 @@
 import praw
-import os
-from dotenv import load_dotenv
 import datetime
-
-
-load_dotenv()
+from config.index import Config
 
 ## Setup
 reddit = praw.Reddit(
-    client_id=os.getenv("reddit_client_id"),
-    client_secret=os.getenv("reddit_client_secret"),
-    user_agent=os.getenv("reddit_user_agent"),
+    client_id=Config.REDDIT_CLIENT_ID,
+    client_secret=Config.REDDIT_CLIENT_SECRET,
+    user_agent=Config.REDDIT_USER_AGENT,
 )
 
 
