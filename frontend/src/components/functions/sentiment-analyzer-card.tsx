@@ -33,9 +33,9 @@ export default function SentimentAnalyzer() {
   };
 
   return (
-    <Card className="mb-8 shadow-md md:w-3/4 rounded-sm">
+    <Card className="mb-8 shadow-md w-full mx-3 md:w-3/4 rounded-sm">
       <CardHeader>
-        <CardTitle className="text-3xl font-semibold">
+        <CardTitle className="md:text-3xl text-xl font-semibold">
           Search Stock Sentiment
         </CardTitle>
         <CardDescription>
@@ -43,8 +43,8 @@ export default function SentimentAnalyzer() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="flex gap-2">
-          <div className="relative flex-1">
+        <form className="md:flex md:flex-row flex-col gap-4">
+          <div className="relative w-full mb-4 md:mb-0">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
@@ -56,7 +56,7 @@ export default function SentimentAnalyzer() {
           </div>
           <Button
             onClick={handleAnalyzeClick}
-            className="gap-2"
+            className="gap-2 md:w-fit w-full"
             disabled={stockMutation.isPending}
           >
             {stockMutation.isPending ? (

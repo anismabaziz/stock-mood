@@ -2,18 +2,37 @@ import { Tabs, TabsTrigger, TabsList, TabsContent } from "../ui/tabs";
 import SentimentDonutChart from "@/components/charts/donut-chart";
 import SentimentBarChart from "@/components/charts/normal-chart";
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import useStockStore from "@/stores/stock-store";
 
 export default function Charts() {
   const { stockData } = useStockStore();
   const sentimentDistribution = stockData!.distribution!;
 
-  const colors = { positive: "green", negative: "red", neutral: "gray" };
+  const colorStyles = {
+    positive: {
+      bg: "bg-green-50",
+      border: "border-green-200",
+      text: "text-green-600",
+      subtext: "text-green-600/70",
+    },
+    negative: {
+      bg: "bg-red-50",
+      border: "border-red-200",
+      text: "text-red-600",
+      subtext: "text-red-600/70",
+    },
+    neutral: {
+      bg: "bg-gray-50",
+      border: "border-gray-200",
+      text: "text-gray-600",
+      subtext: "text-gray-600/70",
+    },
+  };
   const sentimentArr = Object.entries(sentimentDistribution).map((entry) => {
     return {
       sentiment: entry[0],
       count: entry[1],
-      color: colors[`${entry[0]}`],
     };
   });
 
@@ -37,20 +56,17 @@ export default function Charts() {
           <SentimentBarChart distribution={sentimentDistribution} />
         </TabsContent>
       </Tabs>
-      <div className="grid grid-cols-3 gap-4 mt-6 text-center">
-        {sentimentArr.map((arr) => {
+      <div className="grid md:grid-cols-3 grid-cols-1 gap-4 mt-6 text-center">
+        {sentimentArr.map((arr, idx) => {
+          const styles = colorStyles[arr.sentiment as keyof typeof colorStyles];
           return (
-            <Card
-              className={`bg-${arr.color}-50 border-${arr.color}-200 rounded-sm`}
-            >
+            <Card className={cn("rounded-sm", styles.bg)} key={idx}>
               <CardContent className="p-4">
-                <p className={`text-sm text-${arr.color}-600`}>
-                  {arr.sentiment}
-                </p>
-                <p className={`text-3xl font-bold text-${arr.color}-600`}>
+                <p className={cn("text-sm", styles.text)}>{arr.sentiment}</p>
+                <p className={cn("text-3xl font-bold", styles.text)}>
                   {arr.count}%
                 </p>
-                <p className={`text-xs text-${arr.color}-600/70`}>
+                <p className={cn("text-xs", styles.subtext)}>
                   {arr.count} posts
                 </p>
               </CardContent>

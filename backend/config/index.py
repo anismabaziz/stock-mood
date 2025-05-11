@@ -9,3 +9,4 @@ class Config:
     REDDIT_CLIENT_SECRET = os.getenv("reddit_client_secret")
     REDDIT_USER_AGENT = os.getenv("reddit_user_agent")
     FRONTEND_URL = os.getenv("frontend_url")
+    FRONTEND_BUILD = os.getenv("frontend_build")
