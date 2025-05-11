@@ -26,7 +26,7 @@ export default function PostCard({ post }: PostCardProps) {
           {post.content}
         </p>
       </CardContent>
-      <CardFooter className="border-t bg-slate-50 dark:bg-slate-900 flex justify-between items-center pt-3 pb-3 text-xs text-muted-foreground">
+      <CardFooter className="border-t bg-slate-50 dark:bg-slate-900 flex justify-between flex-wrap gap-2 items-center pt-3 pb-3 text-xs text-muted-foreground">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1">
             <ThumbsUp className="h-3 w-3" />
@@ -62,7 +62,9 @@ function SentimentBadge({ sentiment }: { sentiment: string }) {
   return (
     <Badge
       variant="outline"
-      className={`${variants[sentiment]} flex items-center gap-1`}
+      className={`${
+        variants[sentiment as "positive" | "neutral" | "negative"]
+      } flex items-center gap-1`}
     >
       {sentiment}
     </Badge>

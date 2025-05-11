@@ -17,47 +17,63 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import useStockStore from "@/stores/stock-store";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Badge } from "../ui/badge";
+import PostsPagination from "./posts-pagination";
 
 export default function RedditPosts() {
   const { stockData } = useStockStore();
   const posts = stockData!.results!;
 
+  // filtering & sorting
   const [sentimentFilter, setSentimentFilter] = useState<
     "all" | "positive" | "neutral" | "negative"
   >("all");
   const [sortOption, setSortOption] = useState<"relevance" | "date">(
     "relevance"
   );
-
   const filteredAndSortedPosts = useMemo(() => {
     let result = [...posts];
-
     if (sentimentFilter !== "all") {
       result = result.filter(
         (post) => post.sentiment.toLowerCase() === sentimentFilter
       );
     }
-
     if (sortOption === "date") {
       result.sort(
         (a, b) =>
           new Date(b.created_utc).getTime() - new Date(a.created_utc).getTime()
       );
     }
-
     if (sortOption === "relevance") {
       result.sort((a, b) => b.upvotes - a.upvotes);
     }
-
     return result;
   }, [posts, sentimentFilter, sortOption]);
 
+  // pagination
+  const postsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const indexLastPost = currentPage * postsPerPage;
+  const indexFirstPost = indexLastPost - postsPerPage;
+  const currentPosts = filteredAndSortedPosts.slice(
+    indexFirstPost,
+    indexLastPost
+  );
+  const totalPages = Math.ceil(filteredAndSortedPosts.length / postsPerPage);
+  const postsRef = useRef<HTMLDivElement | null>(null);
+  function handlePageChange(page: number) {
+    setCurrentPage(page);
+    postsRef.current?.scrollIntoView({ behavior: "smooth" });
+  }
+
   return (
-    <div className="md:w-3/4 space-y-6">
-      <div className="flex items-center gap-4 justify-between">
-        <h2 className="text-xl font-semibold flex items-center gap-2">
+    <div className="md:w-3/4 space-y-6 w-full">
+      <div
+        className="flex md:items-center items-start flex-col md:flex-row gap-4 justify-between py-4"
+        ref={postsRef}
+      >
+        <h2 className="text-xl font-semibold flex  items-center gap-2">
           <BarChart3 className="h-5 w-5 text-emerald-500" />
           Reddit Posts
         </h2>
@@ -71,10 +87,18 @@ export default function RedditPosts() {
       </div>
 
       <div className="space-y-4">
-        {filteredAndSortedPosts.map((post) => {
+        {currentPosts.map((post) => {
           return <PostCard post={post} />;
         })}
       </div>
+
+      {totalPages > 1 && (
+        <PostsPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }

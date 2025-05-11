@@ -15,11 +15,11 @@ export default function AnalysisCard() {
   const sentimentDistribution = stockData?.distribution;
 
   return (
-    <Card className="mb-8 shadow-md md:w-3/4 rounded-sm pt-0">
+    <Card className="mb-8 shadow-md md:w-3/4 w-full mx-3 rounded-sm pt-0">
       <CardHeader className="bg-slate-50 dark:bg-slate-900 border-b pt-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2 text-2xl font-semibold">
+        <div className="flex flex-col md:flex-row items-center justify-between">
+          <div className="mb-3 md:mb-0">
+            <CardTitle className="flex items-center gap-2 md:text-2xl text-lg font-semibold">
               <TrendingUp className="h-5 w-5 text-emerald-500" />
               Sentiment Analysis for {stockName}
             </CardTitle>
@@ -27,7 +27,7 @@ export default function AnalysisCard() {
               Based on 100 posts from r/stocks subreddit
             </CardDescription>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <div className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
               {sentimentDistribution?.positive}% Positive
             </div>

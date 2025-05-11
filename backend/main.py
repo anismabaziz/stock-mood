@@ -5,9 +5,7 @@ from config.index import Config
 
 app = FastAPI()
 
-origins = [
-    Config.FRONTEND_URL,
-]
+origins = [Config.FRONTEND_URL, Config.FRONTEND_BUILD]
 
 app.add_middleware(
     CORSMiddleware,
