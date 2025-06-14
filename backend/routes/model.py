@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 from helpers.reddit import fetch_posts, model_post
-from helpers.text import clean
+from helpers.text import clean, count_words, vader_analysis
 from helpers.model import predict, embed
 from fastapi import APIRouter
-
+import numpy as np
 
 router = APIRouter()
 
@@ -25,9 +25,25 @@ def analyze_stock(stock: Stock):
     ## clean and embed posts
     texts = [clean(post) for post in fetch_results]
     embeddings = embed(texts)
+    words_count = [count_words(text) for text in texts]
+    vader_scores = [vader_analysis(text) for text in texts]
+    vader_results = []
+    for score in vader_scores:
+        result = []
+        for key, value in score.items():
+            result.append(value)
+        vader_results.append(result)
+
+    # make features vector
+    features = []
+    for emb, count, vader in zip(embeddings, words_count, vader_results):
+        emb = np.array(emb)
+        combined = np.concatenate([emb, [count], vader])
+        features.append(combined)
+    features = np.array(features)
 
     ## run predictions
-    predictions = predict(embeddings)
+    predictions = predict(features)
 
     ## model posts
     results = [
