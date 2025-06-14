@@ -75,8 +75,6 @@ cd ../frontend
 
 # Install dependencies
 npm install
-# or
-yarn install
 ```
 
 ### 🏃‍♂️ Running the Application
@@ -129,7 +127,7 @@ The final model uses a **custom-built neural network** that combines FinBERT's p
 ### Backend:
 
 - FastAPI
-- PRAW or custom Reddit scraper
+- PRAW
 - FinBERT (via HuggingFace Transformers)
 - VADER Sentiment (via NLTK)
 - scikit-learn / TensorFlow (for ML models)
