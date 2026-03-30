@@ -2,9 +2,15 @@ import re
 import spacy
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from functools import lru_cache
 
 nltk.download("vader_lexicon")
 nlp = spacy.load("en_core_web_sm")
+
+
+@lru_cache(maxsize=1)
+def get_vader():
+    return SentimentIntensityAnalyzer()
 
 
 def clean(post):
@@ -30,6 +36,6 @@ def count_words(text):
 
 
 def vader_analysis(text):
-    vader = SentimentIntensityAnalyzer()
+    vader = get_vader()
     scores = vader.polarity_scores(text)
     return scores

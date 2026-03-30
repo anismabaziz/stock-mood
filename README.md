@@ -36,17 +36,11 @@ cd stock-mood
 # Navigate to backend directory
 cd backend
 
-# Create virtual environment
-python -m venv .venv
+# Install uv (if you don't have it yet)
+# macOS/Linux: curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Activate virtual environment
-# On Windows:
-.venv\Scripts\activate
-# On macOS/Linux:
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
+# Sync dependencies (creates .venv automatically)
+uv sync
 ```
 
 #### 3. Environment Configuration
@@ -84,6 +78,9 @@ npm install
 ```bash
 cd backend
 uvicorn main:app --reload
+
+# Or run via uv-managed environment
+uv run uvicorn main:app --reload
 ```
 
 #### Start Frontend Development Server
