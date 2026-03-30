@@ -1,6 +1,22 @@
 import praw
 import datetime
+import re
 from config.index import Config
+
+SOURCE_SUBREDDITS = [
+    "stocks",
+    "StockMarket",
+    "investing",
+    "wallstreetbets",
+    "options",
+    "ValueInvesting",
+    "SecurityAnalysis",
+    "pennystocks",
+    "trading",
+]
+MAX_RESULTS = 100
+MAX_SEARCH_RESULTS = 500
+MAX_NEW_PER_SUBREDDIT = 120
 
 ## Setup
 reddit = praw.Reddit(
@@ -11,16 +27,51 @@ reddit = praw.Reddit(
 
 
 def fetch_posts(stock_symbol):
-    ### subreddit
-    subreddit = reddit.subreddit("stocks")
+    symbol_pattern = re.compile(rf"(?<!\w)\$?{re.escape(stock_symbol)}(?!\w)", re.IGNORECASE)
+    subreddit_group = reddit.subreddit("+".join(SOURCE_SUBREDDITS))
+    posts = []
+    seen_ids = set()
 
-    ### search query
-    query = f"title:{stock_symbol}"
+    def add_if_match(post):
+        post_text = f"{post.title}\n{post.selftext or ''}"
+        if post.id in seen_ids or not symbol_pattern.search(post_text):
+            return False
+        posts.append(post)
+        seen_ids.add(post.id)
+        return True
 
-    ### fetch posts
-    results = subreddit.search(query, limit=100, sort="new")
+    for post in subreddit_group.search(
+        stock_symbol,
+        sort="new",
+        limit=MAX_SEARCH_RESULTS,
+    ):
+        add_if_match(post)
+        if len(posts) >= MAX_RESULTS:
+            break
 
-    return results
+    if len(posts) < MAX_RESULTS:
+        for subreddit_name in SOURCE_SUBREDDITS:
+            subreddit = reddit.subreddit(subreddit_name)
+            for post in subreddit.new(limit=MAX_NEW_PER_SUBREDDIT):
+                add_if_match(post)
+                if len(posts) >= MAX_RESULTS:
+                    break
+            if len(posts) >= MAX_RESULTS:
+                break
+
+    if len(posts) < MAX_RESULTS:
+        for post in subreddit_group.search(
+            f'title:"{stock_symbol}"',
+            sort="new",
+            limit=MAX_SEARCH_RESULTS,
+        ):
+            add_if_match(post)
+            if len(posts) >= MAX_RESULTS:
+                break
+
+    posts.sort(key=lambda post: post.created_utc, reverse=True)
+
+    return posts[:MAX_RESULTS]
 
 
 def model_post(post, prediction):

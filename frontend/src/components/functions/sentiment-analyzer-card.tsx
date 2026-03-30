@@ -10,7 +10,7 @@ import { ArrowRight, Search, Loader2 } from "lucide-react";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { analyze } from "@/services/model";
+import { analyze, AnalyzeRequestError } from "@/services/model";
 import useStockStore from "@/stores/stock-store";
 
 export default function SentimentAnalyzer() {
@@ -27,10 +27,21 @@ export default function SentimentAnalyzer() {
   });
 
   const handleAnalyzeClick = async () => {
+    if (!stockInput.trim()) {
+      return;
+    }
+
     setStockName("");
     setStockData(null);
-    stockMutation.mutate(stockInput);
+    stockMutation.mutate(stockInput.trim());
   };
+
+  const errorMessage =
+    stockMutation.error instanceof AnalyzeRequestError
+      ? stockMutation.error.message
+      : stockMutation.isError
+        ? "Unable to analyze this stock right now. Please try again."
+        : null;
 
   return (
     <Card className="mb-8 shadow-md w-full mx-3 md:w-3/4 rounded-sm">
@@ -43,7 +54,13 @@ export default function SentimentAnalyzer() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="md:flex md:flex-row flex-col gap-4">
+        <form
+          className="md:flex md:flex-row flex-col gap-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleAnalyzeClick();
+          }}
+        >
           <div className="relative w-full mb-4 md:mb-0">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -55,9 +72,9 @@ export default function SentimentAnalyzer() {
             />
           </div>
           <Button
-            onClick={handleAnalyzeClick}
+            type="submit"
             className="gap-2 md:w-fit w-full"
-            disabled={stockMutation.isPending}
+            disabled={stockMutation.isPending || !stockInput.trim()}
           >
             {stockMutation.isPending ? (
               <>
@@ -72,6 +89,9 @@ export default function SentimentAnalyzer() {
             )}
           </Button>
         </form>
+        {errorMessage && (
+          <p className="mt-3 text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
+        )}
       </CardContent>
     </Card>
   );

@@ -24,7 +24,7 @@ export default function AnalysisCard() {
               Sentiment Analysis for {stockName}
             </CardTitle>
             <CardDescription>
-              Based on 100 posts from r/stocks subreddit
+              Based on up to 100 latest matching posts from multiple finance subreddits
             </CardDescription>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
