@@ -1,13 +1,14 @@
 # Reddit Stock Sentiment Analyzer 🧠📈
 
-This is a full-stack web application that performs sentiment analysis on the top 100 posts from the r/stocks subreddit using machine learning models with **FinBERT embeddings** and additional text features. It is built with a **FastAPI** backend and a **React (Vite)** frontend.
+This is a full-stack web application that performs sentiment analysis on up to 100 recent Reddit posts about a stock symbol using machine learning models with **FinBERT embeddings** and additional text features. It is built with a **FastAPI** backend and a **React (Vite)** frontend.
 
 ## ✨ Features
 
-- 🔍 Fetches and displays the top 100 posts from r/stocks subreddit.
+- 🔍 Fetches and displays up to 100 latest matching posts from multiple finance subreddits.
 - 🧠 Classifies each post as **Positive**, **Neutral**, or **Negative** using trained ML models.
 - 📈 Uses FinBERT (pre-trained on financial text) for generating embeddings.
 - 📊 Incorporates additional text features like word count and VADER sentiment scores.
+- 🛡️ Includes backend API error handling and frontend request timeout/error messaging.
 - ⚡ Built with FastAPI for robust backend performance.
 - ⚛️ Clean and fast React interface via Vite.
 
@@ -43,6 +44,8 @@ cd backend
 uv sync
 ```
 
+Python note: backend dependencies are pinned for Python 3.11/3.12 compatibility.
+
 #### 3. Environment Configuration
 
 Create a `.env` file in the backend directory:
@@ -77,11 +80,13 @@ npm install
 
 ```bash
 cd backend
-uvicorn main:app --reload
-
-# Or run via uv-managed environment
 uv run uvicorn main:app --reload
 ```
+
+Backend URLs:
+
+- Health check: `http://127.0.0.1:8000/ping`
+- OpenAPI docs: `http://127.0.0.1:8000/docs`
 
 #### Start Frontend Development Server
 
@@ -89,6 +94,14 @@ uv run uvicorn main:app --reload
 cd frontend
 npm run dev
 ```
+
+If the frontend cannot reach the backend, verify `frontend/.env`:
+
+```bash
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+Then restart the frontend dev server.
 
 ## 🧠 Machine Learning Model
 
